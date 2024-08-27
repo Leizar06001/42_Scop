@@ -1,15 +1,5 @@
 {
     "files.associations": {
-        "mlx.h": "c",
-        "mlx_int.h": "c",
-        "stdbool.h": "c",
-        "stdio.h": "c",
-        "scop.h": "c",
-        "math.h": "c",
-        "glfw3.h": "c",
-        "fstream": "cpp",
-        "ostream": "cpp",
-        "iosfwd": "cpp",
         "array": "cpp",
         "atomic": "cpp",
         "bit": "cpp",
@@ -37,29 +27,28 @@
         "memory": "cpp",
         "memory_resource": "cpp",
         "numeric": "cpp",
+        "optional": "cpp",
         "random": "cpp",
         "string_view": "cpp",
         "system_error": "cpp",
         "tuple": "cpp",
         "type_traits": "cpp",
         "utility": "cpp",
+        "fstream": "cpp",
         "initializer_list": "cpp",
+        "iosfwd": "cpp",
         "iostream": "cpp",
         "istream": "cpp",
         "limits": "cpp",
         "new": "cpp",
         "numbers": "cpp",
+        "ostream": "cpp",
         "sstream": "cpp",
         "stdexcept": "cpp",
         "streambuf": "cpp",
         "cinttypes": "cpp",
-        "typeinfo": "cpp"
-    },
-    "makefile.launchConfigurations": [
-        {
-            "cwd": "/mnt/d/CODE/42_Scop",
-            "binaryPath": "/mnt/d/CODE/42_Scop/scop",
-            "binaryArgs": []
-        }
-    ]
+        "typeinfo": "cpp",
+        "ctime": "cpp",
+        "cstring": "cpp"
+    }
 }
