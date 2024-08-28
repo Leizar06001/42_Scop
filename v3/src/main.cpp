@@ -17,13 +17,14 @@ int main_loop(t_env *env){
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glfwPollEvents();
 
+        processInputs(env);
+
         glUseProgram(shader);
         triangle->draw();
 
         glfwSwapBuffers(env->window);
 
-    } while( glfwGetKey(env->window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
-		   glfwWindowShouldClose(env->window) == 0 );
+    } while( glfwWindowShouldClose(env->window) == 0 );
     delete triangle;
     glDeleteProgram(shader);
     return 0;
