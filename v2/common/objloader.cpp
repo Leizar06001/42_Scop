@@ -41,6 +41,7 @@ bool loadOBJ(
 		return false;
 	}
     int ret;
+	int nb_faces = 0;
 
 	while( 1 ){
 
@@ -80,6 +81,7 @@ bool loadOBJ(
                                         &vertexIndex[1], &uvIndex[1], &normalIndex[1],
                                         &vertexIndex[2], &uvIndex[2], &normalIndex[2]);
                 if (matches == 9) {
+					++nb_faces;
                     for(int i = 0; i < 3; i++) {
                         triVertexIndices.push_back(vertexIndex[i]);
                         triUvIndices    .push_back(uvIndex[i]);
@@ -92,6 +94,7 @@ bool loadOBJ(
                         &vertexIndex[0], &vertexIndex[1], &vertexIndex[2], &vertexIndex[3]);
                     
                     if (matches == 4) {
+						++nb_faces;
                         // std::cout << "Quad" << std::endl;
                         // Cas avec seulement les indices de vertex
                         for(int i = 0; i < 4; i++) {
@@ -106,6 +109,7 @@ bool loadOBJ(
                         &vertexIndex[0], &vertexIndex[1], &vertexIndex[2]);
                     
                         if (matches == 3) {
+							++nb_faces;
                             // std::cout << "Tri : ";
                             // Cas avec seulement les indices de vertex
                             for(int i = 0; i < 3; i++) {
@@ -194,6 +198,8 @@ bool loadOBJ(
 		out_quaduvs     .push_back(uv);
 		out_quadnormals .push_back(normal);
 	}
+	
+	std::cout << "Nb faces : " << nb_faces << std::endl;
 
 	return true;
 }

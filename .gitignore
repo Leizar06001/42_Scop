@@ -1,3 +1,4 @@
+.vscode
 # Prerequisites
 *.d
 
@@ -5,7 +6,6 @@
 *.slo
 *.lo
 *.o
-*.obj
 
 # Precompiled Headers
 *.gch
@@ -23,7 +23,6 @@
 # Compiled Static libraries
 *.lai
 *.la
-*.a
 *.lib
 
 # Executables

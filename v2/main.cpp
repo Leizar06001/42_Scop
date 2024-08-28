@@ -1,27 +1,16 @@
 // Include standard headers
-#include <stdio.h>
-#include <stdlib.h>
+
+#include "scop.hpp"
 #include <random>
 #include <ctime>
-#include <iostream>
 
 #define WIN_WIDTH 1024
 #define WIN_HEIGHT 768
 
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include "external/glm-1.0.1/glm.hpp"
-#include "external/glm-1.0.1/gtc/matrix_transform.hpp"
 using namespace glm;
 
 GLFWwindow* window;
-
-#include "common/image_loader.hpp"
-#include "common/controls.hpp"
-#include "common/shader.hpp"
-#include "common/objloader.hpp"
-
 
 
 float randomFloat() {
@@ -31,7 +20,7 @@ float randomFloat() {
     return distr(gen);
 }
 
-int main( void )
+int main( int argc, char **argv )
 {
 	// Initialize GLFW
 	if( !glfwInit() )
@@ -48,7 +37,7 @@ int main( void )
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //We don't want the old OpenGL 
 
 	// Open a window and create its OpenGL context
-	window = glfwCreateWindow( WIN_WIDTH, WIN_HEIGHT, "Tutorial 03 - Matrices", NULL, NULL);
+	window = glfwCreateWindow( WIN_WIDTH, WIN_HEIGHT, "SCOP", NULL, NULL);
 	if( window == NULL ){
 		fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
 		getchar();
@@ -81,9 +70,9 @@ int main( void )
 	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
 
 	// Enable depth test
-	// glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
 	// Accept fragment if it closer to the camera than the former one
-	// glDepthFunc(GL_LESS);
+	glDepthFunc(GL_LESS);
 	// Cull triangles which normal is not towards the camera
 	// glEnable(GL_CULL_FACE);
 
@@ -94,7 +83,9 @@ int main( void )
 
 	// Create and compile our GLSL program from the shaders
 	GLuint programID = LoadShaders( "shaders/vertexText.txt", "shaders/fragmentText.txt" );
-
+	if (programID == 0) {
+		return 1;
+	}
 	// Get a handle for our "MVP" uniform
 	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
 
@@ -111,38 +102,48 @@ int main( void )
 	std::vector<glm::vec3> quadVertices;
 	std::vector<glm::vec2> quadUvs;
 	std::vector<glm::vec3> quadNormals; 
-	bool res = loadOBJ("42.obj", triVertices, triUvs, triNormals, quadVertices, quadUvs, quadNormals);
-
+	bool res;
+	if (argc > 1) {
+		res = loadOBJ(argv[1], triVertices, triUvs, triNormals, quadVertices, quadUvs, quadNormals);
+	} else {
+		res = loadOBJ("teapot.obj", triVertices, triUvs, triNormals, quadVertices, quadUvs, quadNormals);
+	}
+	if (!res){
+		std::cout << "Failed to load OBJ file, exit" << std::endl;
+		return(1);
+	}
 
 	GLuint vertexbuffer;
 	glGenBuffers(1, &vertexbuffer);
-	
-	
 
 	GLuint uvbuffer;
 	glGenBuffers(1, &uvbuffer);
 	
 	
-
-	
-	
-
 	srand(static_cast<unsigned int>(time(0)));
 
-	double lastTime = glfwGetTime();
- 	int nbFrames = 0;
+	if(initText2D("resources/Holstein.DDS") == -1) {
+		std::cout << "Failed to load font file, exit" << std::endl;
+		return 1;
+	}
 
-	
+	// For FPS
+	double lastTime = glfwGetTime();
+ 	int nbFrames = 0, nbFrames2 = 0;
+	float frameTime = 0;
+	float fps_interval = 0.2;
 
 	do {
 		// Measure speed
 		double currentTime = glfwGetTime();
 		nbFrames++;
-		if ( currentTime - lastTime >= 1.0 ){ // If last prinf() was more than 1 sec ago
+		if ( (float)currentTime - (float)lastTime >= fps_interval ){ // If last prinf() was more than 1 sec ago
 			// printf and reset timer
-			std::cout << 1000.0/double(nbFrames) << " ms/frame - " << nbFrames << " fps" << std::endl;
+			frameTime = (fps_interval * 1000)/double(nbFrames);
+			nbFrames2 = nbFrames * (1.0 / fps_interval);
+			// std::cout << frameTime << " ms/frame - " << nbFrames << " fps" << std::endl;
 			nbFrames = 0;
-			lastTime += 1.0;
+			lastTime += fps_interval;
 		}
 
 		// Clear the screen
@@ -200,6 +201,10 @@ int main( void )
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
 
+		char text[256];
+		sprintf(text,"%.2f ms / %d FPS", frameTime, nbFrames2);
+		printText2D(text, 10, 580, 15);
+
 		// Swap buffers
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -214,6 +219,9 @@ int main( void )
 	glDeleteProgram(programID);
 	glDeleteTextures(1, &TextureID);
 	glDeleteVertexArrays(1, &VertexArrayID);
+
+	// Delete the text's VBO, the shader and the texture
+	cleanupText2D();
 
 	// Close OpenGL window and terminate GLFW
 	glfwTerminate();
