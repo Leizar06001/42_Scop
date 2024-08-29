@@ -21,7 +21,7 @@ Vec3<float> camUp    = Vec3<float>(0.0f, 1.0f, 0.0f);
 float randomFloat() {
     static std::mt19937 gen(std::time(0)); // Seed the generator
     static std::uniform_real_distribution<> distr(-1.0, 1.0); // Define the range
-    
+
     return distr(gen);
 }
 
@@ -29,7 +29,7 @@ int main_loop(t_env *env){
     TriangleMesh* triangle = new TriangleMesh();
 
     unsigned int shader = make_shader(
-		"./shaders/vertSimple.txt", 
+		"./shaders/vertSimple.txt",
 		"./shaders/fragSimple.txt"
 	);
     if (shader == 0){
@@ -81,13 +81,13 @@ int main_loop(t_env *env){
         camx = sin(glfwGetTime()) * radius;
         camz = cos(glfwGetTime()) * radius;
 
-        // Mat4 view = lookAt(camPos, camPos - camFront, camUp);
-        Mat4 view = lookAt(camPos, Vec3<float>(0.0f, 0.0f, 0.0f), camUp);
+        Mat4 view = lookAt(camPos, camPos - camFront, camUp);
+        // Mat4 view = lookAt(camPos, Vec3<float>(0.0f, 0.0f, 0.0f), camUp);
         Mat4 projection = Mat4::perspective(degToRad(fov), (float)WIN_WIDTH / (float)WIN_HEIGHT, 0.1f, 100.0f);
-        
+
         for(int i = 0; i < 10; i++){
             Mat4 modelMatrix;
-            
+
             rot += 0.001f;
             dec -= 0.0001f;
             // view = mat4translate(view, Vec3<float>(0.0f, 0.0f, -3.0f + posz));

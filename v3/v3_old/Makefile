@@ -1,12 +1,12 @@
 NAME := scop.out
 CC := g++
-CFLAGS := -Wall -Wextra -pedantic #-fsanitize=address -D_GNU_SOURCE
+CFLAGS := -Wall -Wextra -pedantic# -fsanitize=address
 
-LIBS := -lX11 -lpthread -lm -lGL -lglfw -ldl -lc
+LIBS := -lX11 -lpthread -lm -lGL -lglfw -ldl
 # -lX11 : 	Création de fenêtres et la gestion des événements graphiques.
 # -lpthread:Programmation multithread
 # -lm : 	Bibliothèque mathématique standard du C
-# -lGL : 	Bibliothèque OpenGL pour le rendu graphique 2D et 3D
+# -lGL : 	Bibliothèque OpenGL pour le rendu graphique 2D et 3D 
 # -lglfw : 	Création de fenêtres, contextes et surfaces OpenGL, ainsi que la gestion des entrées.
 # -ldl : 	Chargement de bibliothèques partagées à l'exécution.
 
