@@ -15,6 +15,7 @@
 #include <GLFW/glfw3.h>
 
 #include <triangle_mesh.h>
+#include <math_utils.hpp>
 
 #define PROG_NAME "SCOP"
 #define WIN_WIDTH 800
