@@ -16,7 +16,7 @@ GLFWwindow* window;
 float randomFloat() {
     static std::mt19937 gen(std::time(0)); // Seed the generator
     static std::uniform_real_distribution<> distr(0.0, 1.0); // Define the range
-    
+
     return distr(gen);
 }
 
@@ -34,7 +34,7 @@ int main( int argc, char **argv )
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make macOS happy; should not be needed
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //We don't want the old OpenGL 
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //We don't want the old OpenGL
 
 	// Open a window and create its OpenGL context
 	window = glfwCreateWindow( WIN_WIDTH, WIN_HEIGHT, "SCOP", NULL, NULL);
@@ -98,10 +98,10 @@ int main( int argc, char **argv )
 	// Read our .obj file
 	std::vector<glm::vec3> triVertices;
 	std::vector<glm::vec2> triUvs;
-	std::vector<glm::vec3> triNormals; 
+	std::vector<glm::vec3> triNormals;
 	std::vector<glm::vec3> quadVertices;
 	std::vector<glm::vec2> quadUvs;
-	std::vector<glm::vec3> quadNormals; 
+	std::vector<glm::vec3> quadNormals;
 	bool res;
 	if (argc > 1) {
 		res = loadOBJ(argv[1], triVertices, triUvs, triNormals, quadVertices, quadUvs, quadNormals);
@@ -118,8 +118,8 @@ int main( int argc, char **argv )
 
 	GLuint uvbuffer;
 	glGenBuffers(1, &uvbuffer);
-	
-	
+
+
 	srand(static_cast<unsigned int>(time(0)));
 
 	if(initText2D("resources/Holstein.DDS") == -1) {
@@ -159,7 +159,7 @@ int main( int argc, char **argv )
 		glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
 
 
-		// Send our transformation to the currently bound shader, 
+		// Send our transformation to the currently bound shader,
 		// in the "MVP" uniform
 		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
 

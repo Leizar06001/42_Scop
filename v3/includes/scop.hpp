@@ -19,6 +19,7 @@
 #include <shaders.hpp>
 #include <image_loader.hpp>
 #include <objloader.hpp>
+#include <obj_mesh.hpp>
 
 #define PROG_NAME "SCOP"
 #define WIN_WIDTH 800

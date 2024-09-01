@@ -41,11 +41,6 @@ int main_loop(t_env *env){
     float rot = 0.0f;
     float dec = 0.01f;
 
-    	// For FPS
-	double lastTime = glfwGetTime();
- 	int nbFrames = 0, nbFrames2 = 0;
-	float frameTime = 0;
-	float fps_interval = 0.2;
 
     Vec3<float> objPos[] = {
         Vec3<float>(0.0f, 0.0f, 0.0f),
@@ -59,6 +54,12 @@ int main_loop(t_env *env){
         Vec3<float>(0.0f, 0.0f, 0.0f),
         Vec3<float>(0.0f, 0.0f, 0.0f),
     };
+
+    	// For FPS
+	double lastTime = glfwGetTime();
+ 	int nbFrames = 0, nbFrames2 = 0;
+	float frameTime = 0;
+	float fps_interval = 0.2;
 
     do {
         // Measure speed
