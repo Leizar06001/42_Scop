@@ -20,7 +20,7 @@ class Vec {
         T& w;
 
         // Default constructor
-        Vec() : 
+        Vec() :
             _data{},
             x(_data[0]),
             y(N > 1 ? _data[1] : _data[0]),
@@ -84,14 +84,21 @@ Vec3<float> vecNormalize(const Vec3<float>& vec);
 
 template <typename T, size_t N>
 template <typename... Args>
-Vec<T, N>::Vec(Args... args) : _data{static_cast<T>(args)...}, 
+Vec<T, N>::Vec(Args... args) : _data{static_cast<T>(args)...},
                                x(_data[0]), y(_data[1]), z(_data[2]), w(_data[3]) {
     static_assert(sizeof...(args) == N, "Invalid number of arguments");
 }
 
 template <typename T, size_t N>
-Vec<T, N>::Vec(const Vec<T, N>& other) : _data(other._data), 
-                                         x(_data[0]), y(_data[1]), z(_data[2]), w(_data[3]) {}
+// Vec<T, N>::Vec(const Vec<T, N>& other) : _data(other._data),
+//                                          x(_data[0]), y(_data[1]), z(_data[2]), w(_data[3]) {}
+Vec<T, N>::Vec(const Vec<T, N>& other) :
+                _data(other._data),
+                x(_data[0]),
+                y(N > 1 ? _data[1] : _data[0]),
+                z(N > 2 ? _data[2] : _data[0]),
+                w(N > 3 ? _data[3] : _data[0])
+{}
 
 template <typename T, size_t N>
 Vec<T, N>& Vec<T, N>::operator=(const Vec<T, N>& other) {

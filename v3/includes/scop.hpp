@@ -16,6 +16,9 @@
 
 #include <triangle_mesh.h>
 #include <math_utils.hpp>
+#include <shaders.hpp>
+#include <image_loader.hpp>
+#include <objloader.hpp>
 
 #define PROG_NAME "SCOP"
 #define WIN_WIDTH 800

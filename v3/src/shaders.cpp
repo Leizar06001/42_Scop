@@ -1,81 +1,98 @@
 #include <scop.hpp>
 
-unsigned int make_shader(const std::string& vertex_filepath, const std::string& fragment_filepath) {
+Shader::Shader(const char *vertexPath, const char *fragmentPath){
+	std::string vertexCode;
+	std::string fragmentCode;
+	std::ifstream vShaderFile;
+	std::ifstream fShaderFile;
+	// Ensure ifstream objects can throw exceptions
+	vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
-	//To store all the shader modules
-	std::vector<unsigned int> modules;
-
-	unsigned int module;
-	//Add a vertex shader module
-	module = make_module(vertex_filepath, GL_VERTEX_SHADER);
-	if (module == 0) {
-		return 0;
+	try{
+		// Open files
+		vShaderFile.open(vertexPath);
+		fShaderFile.open(fragmentPath);
+		std::stringstream vShaderStream, fShaderStream;
+		// Read file's buffer contents into streams
+		vShaderStream << vShaderFile.rdbuf();
+		fShaderStream << fShaderFile.rdbuf();
+		// Close file handlers
+		vShaderFile.close();
+		fShaderFile.close();
+		// Convert stream into string
+		vertexCode = vShaderStream.str();
+		fragmentCode = fShaderStream.str();
 	}
-	modules.push_back(module);
-
-	//Add a fragment shader module
-	module = make_module(fragment_filepath, GL_FRAGMENT_SHADER);
-	if (module == 0) {
-		return 0;
+	catch(const std::ifstream::failure& e) {
+		// Handle the exception
+		std::cerr << "Exception opening/reading file: " << e.what() << std::endl;
 	}
-	modules.push_back(module);
 
-	//Attach all the modules then link the program
-	unsigned int shader = glCreateProgram();
-	for (unsigned int shaderModule : modules) {
-		glAttachShader(shader, shaderModule);
-	}
-	glLinkProgram(shader);
-
-	//Check the linking worked
+	const char *vShaderCode = vertexCode.c_str();
+	const char *fShaderCode = fragmentCode.c_str();
+	unsigned int vertex, fragment;
 	int success;
-	glGetProgramiv(shader, GL_LINK_STATUS, &success);
-	if (!success) {
-		char errorLog[1024];
-		glGetProgramInfoLog(shader, 1024, NULL, errorLog);
-		std::cout << "Shader linking error:\n" << errorLog << '\n';
-	}
+	char infoLog[512];
 
-	//Modules are now unneeded and can be freed
-	for (unsigned int shaderModule : modules) {
-		glDeleteShader(shaderModule);
+	// Vertex Shader
+	vertex = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertex, 1, &vShaderCode, NULL);
+	glCompileShader(vertex);
+	// Print compile errors if any
+	glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
+	if (!success){
+		glGetShaderInfoLog(vertex, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+	};
+	// Fragment Shader
+	fragment = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragment, 1, &fShaderCode, NULL);
+	glCompileShader(fragment);
+	// Print compile errors if any
+	glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
+	if (!success){
+		glGetShaderInfoLog(fragment, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
-
-	return shader;
+	// Shader Program
+	ID = glCreateProgram();
+	glAttachShader(ID, vertex);
+	glAttachShader(ID, fragment);
+	glLinkProgram(ID);
+	// Print linking errors if any
+	glGetProgramiv(ID, GL_LINK_STATUS, &success);
+	if (!success){
+		glGetProgramInfoLog(ID, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+	}
+	// Delete the shaders as they're linked into our program now and no longer necessary
+	glDeleteShader(vertex);
+	glDeleteShader(fragment);
 
 }
 
-unsigned int make_module(const std::string& filepath, unsigned int module_type) {
-	
-	std::ifstream file;
-	std::stringstream bufferedLines;
-	std::string line;
-
-	file.open(filepath);
-	if (!file.is_open()) {
-		std::cout << "Failed to open file: " << filepath << std::endl;
-		return 0;
-	}
-	while (std::getline(file, line)) {
-		//std::cout << line << std::endl;
-		bufferedLines << line << '\n';
-	}
-	std::string shaderSource = bufferedLines.str();
-	const char* shaderSrc = shaderSource.c_str();
-	bufferedLines.str("");
-	file.close();
-
-	unsigned int shaderModule = glCreateShader(module_type);
-	glShaderSource(shaderModule, 1, &shaderSrc, NULL);
-	glCompileShader(shaderModule);
-
-	int success;
-	glGetShaderiv(shaderModule, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		char errorLog[1024];
-		glGetShaderInfoLog(shaderModule, 1024, NULL, errorLog);
-		std::cout << "Shader Module compilation error:\n" << errorLog << std::endl;
-	}
-
-	return shaderModule;
+Shader::~Shader(){
+	glDeleteProgram(ID);
 }
+
+unsigned int Shader::getID(){
+	return ID;
+}
+
+void Shader::use(){
+	glUseProgram(ID);
+}
+
+void Shader::setBool(const std::string &name, bool value) const{
+	glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
+}
+
+void Shader::setInt(const std::string &name, int value) const{
+	glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
+}
+
+void Shader::setFloat(const std::string &name, float value) const{
+	glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
+}
+
